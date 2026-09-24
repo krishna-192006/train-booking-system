@@ -34,6 +34,9 @@ public class SeatAllocationUtil {
                 return 24;
             case "2A":
                 return 48;
+            case "EC":
+                return 45;
+            case "CC":
             case "3A":
             case "SL":
             default:
@@ -49,6 +52,10 @@ public class SeatAllocationUtil {
                 return "A";
             case "3A":
                 return "B";
+            case "CC":
+                return "C";
+            case "EC":
+                return "E";
             case "SL":
             default:
                 return "S";
@@ -74,6 +81,19 @@ public class SeatAllocationUtil {
                 case 0:
                 default:
                     return "Side Upper";
+            }
+        } else if ("CC".equals(code) || "EC".equals(code)) {
+            int rem = seatNumberInCoach % 5;
+            switch (rem) {
+                case 1:
+                case 0:
+                    return "Window";
+                case 2:
+                case 4:
+                    return "Middle";
+                case 3:
+                default:
+                    return "Aisle";
             }
         } else { // 3A and SL
             int rem = seatNumberInCoach % 8;

@@ -30,6 +30,10 @@ const AdminDashboard = () => {
   const [a2Seats, setA2Seats] = useState(48);
   const [a1Price, setA1Price] = useState(3200);
   const [a1Seats, setA1Seats] = useState(24);
+  const [ccPrice, setCcPrice] = useState(0);
+  const [ccSeats, setCcSeats] = useState(0);
+  const [ecPrice, setEcPrice] = useState(0);
+  const [ecSeats, setEcSeats] = useState(0);
 
   const fetchAdminData = async () => {
     setLoading(true);
@@ -65,6 +69,8 @@ const AdminDashboard = () => {
     setA3Price(1250); setA3Seats(72);
     setA2Price(1850); setA2Seats(48);
     setA1Price(3200); setA1Seats(24);
+    setCcPrice(0); setCcSeats(0);
+    setEcPrice(0); setEcSeats(0);
     setShowModal(true);
   };
 
@@ -78,6 +84,14 @@ const AdminDashboard = () => {
     setArrivalTime(train.arrivalTime);
     setDuration(train.duration);
 
+    // Reset default values first
+    setSlPrice(0); setSlSeats(0);
+    setA3Price(0); setA3Seats(0);
+    setA2Price(0); setA2Seats(0);
+    setA1Price(0); setA1Seats(0);
+    setCcPrice(0); setCcSeats(0);
+    setEcPrice(0); setEcSeats(0);
+
     // Map existing classes
     const sl = train.classes?.find(c => c.classCode === 'SL');
     if (sl) { setSlPrice(sl.price); setSlSeats(sl.totalSeats); }
@@ -87,6 +101,10 @@ const AdminDashboard = () => {
     if (a2) { setA2Price(a2.price); setA2Seats(a2.totalSeats); }
     const a1 = train.classes?.find(c => c.classCode === '1A');
     if (a1) { setA1Price(a1.price); setA1Seats(a1.totalSeats); }
+    const cc = train.classes?.find(c => c.classCode === 'CC');
+    if (cc) { setCcPrice(cc.price); setCcSeats(cc.totalSeats); }
+    const ec = train.classes?.find(c => c.classCode === 'EC');
+    if (ec) { setEcPrice(ec.price); setEcSeats(ec.totalSeats); }
 
     setShowModal(true);
   };
@@ -96,6 +114,17 @@ const AdminDashboard = () => {
     setMessage('');
     setError('');
 
+    const classCandidates = [
+      { classCode: 'SL', price: Number(slPrice), totalSeats: Number(slSeats) },
+      { classCode: '3A', price: Number(a3Price), totalSeats: Number(a3Seats) },
+      { classCode: '2A', price: Number(a2Price), totalSeats: Number(a2Seats) },
+      { classCode: '1A', price: Number(a1Price), totalSeats: Number(a1Seats) },
+      { classCode: 'CC', price: Number(ccPrice), totalSeats: Number(ccSeats) },
+      { classCode: 'EC', price: Number(ecPrice), totalSeats: Number(ecSeats) }
+    ];
+
+    const activeClasses = classCandidates.filter(c => c.totalSeats > 0 && c.price > 0);
+
     const payload = {
       trainNumber,
       name,
@@ -104,12 +133,7 @@ const AdminDashboard = () => {
       departureTime,
       arrivalTime,
       duration,
-      classes: [
-        { classCode: 'SL', price: Number(slPrice), totalSeats: Number(slSeats) },
-        { classCode: '3A', price: Number(a3Price), totalSeats: Number(a3Seats) },
-        { classCode: '2A', price: Number(a2Price), totalSeats: Number(a2Seats) },
-        { classCode: '1A', price: Number(a1Price), totalSeats: Number(a1Seats) }
-      ]
+      classes: activeClasses.length > 0 ? activeClasses : classCandidates.slice(0, 4)
     };
 
     try {
@@ -400,7 +424,7 @@ const AdminDashboard = () => {
                   <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">
                     Class Fares &amp; Capacity
                   </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
                       <span className="font-bold text-xs block text-slate-800 mb-1.5">Sleeper (SL)</span>
                       <input
@@ -470,6 +494,42 @@ const AdminDashboard = () => {
                         className="w-full px-2 py-1 rounded-lg border border-slate-200 text-xs bg-white"
                         value={a1Seats}
                         onChange={(e) => setA1Seats(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                      <span className="font-bold text-xs block text-slate-800 mb-1.5">AC Chair Car (CC)</span>
+                      <input
+                        type="number"
+                        placeholder="Fare ₹"
+                        className="w-full px-2 py-1 mb-1.5 rounded-lg border border-slate-200 text-xs bg-white"
+                        value={ccPrice}
+                        onChange={(e) => setCcPrice(e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Seats"
+                        className="w-full px-2 py-1 rounded-lg border border-slate-200 text-xs bg-white"
+                        value={ccSeats}
+                        onChange={(e) => setCcSeats(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                      <span className="font-bold text-xs block text-slate-800 mb-1.5">Exec. Chair Car (EC)</span>
+                      <input
+                        type="number"
+                        placeholder="Fare ₹"
+                        className="w-full px-2 py-1 mb-1.5 rounded-lg border border-slate-200 text-xs bg-white"
+                        value={ecPrice}
+                        onChange={(e) => setEcPrice(e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Seats"
+                        className="w-full px-2 py-1 rounded-lg border border-slate-200 text-xs bg-white"
+                        value={ecSeats}
+                        onChange={(e) => setEcSeats(e.target.value)}
                       />
                     </div>
                   </div>

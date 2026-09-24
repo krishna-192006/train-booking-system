@@ -49,6 +49,11 @@ export const getBerthType = (classCode, seatNumber) => {
     if (rem === 2 || rem === 4) return 'Upper';
     if (rem === 5) return 'Side Lower';
     return 'Side Upper';
+  } else if (code === 'CC' || code === 'EC') {
+    const rem = seatNumber % 5;
+    if (rem === 1 || rem === 0) return 'Window';
+    if (rem === 2 || rem === 4) return 'Middle';
+    return 'Aisle';
   } else {
     const rem = seatNumber % 8;
     if (rem === 1 || rem === 4) return 'Lower';

@@ -15,7 +15,7 @@ import MyBookings from './pages/MyBookings';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
 
-import 'bootstrap-icons/font/bootstrap-icons.css';
+
 import './App.css';
 
 function App() {
